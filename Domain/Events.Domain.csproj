@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Application\Events.Application.csproj" />
-    <ProjectReference Include="..\Infastructure\Events.Infastructure.csproj" />
+    <Folder Include="Criterias\" />
   </ItemGroup>
 
 </Project>

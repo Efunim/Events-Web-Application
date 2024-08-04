@@ -8,6 +8,6 @@ namespace Events.Domain.Entities
 {
     public abstract class BaseEntity
     {
-        int Id { get; set; }
+        public int Id { get; set; }
     }
 }
