@@ -1,6 +1,8 @@
-﻿namespace Events.Domain.Entities
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Events.Application.DTO.RequestDTO
 {
-    public class Event : BaseEntity
+    public class EventRequestDto
     {
         public int LocationId { get; set; }
         public int CategoryId { get; set; }
@@ -9,9 +11,5 @@
         public DateTime EventTime { get; set; }
         public int MaxParticipants { get; set; }
         public string ImagePath { get; set; }
-
-        public Location Location { get; set; }
-        public EventCategory Category { get; set; }
-        public List<Participant> Participants { get; private set; } = [];
     }
 }
