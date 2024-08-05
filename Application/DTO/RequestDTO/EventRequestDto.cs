@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Events.Application.DTO.RequestDTO
+﻿namespace Events.Application.DTO.RequestDTO
 {
     public class EventRequestDto
     {
