@@ -2,6 +2,7 @@
 using Events.Domain.Entities;
 using Events.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Events.Infastructure.Repositories
 {
@@ -33,6 +34,11 @@ namespace Events.Infastructure.Repositories
         public void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
+        {
+            return await _context.Set<T>().AnyAsync(predicate, cancellationToken);
         }
     }
 }

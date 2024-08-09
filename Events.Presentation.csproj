@@ -24,6 +24,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="Infastructure\Events.Infastructure.csproj" />
   </ItemGroup>
 

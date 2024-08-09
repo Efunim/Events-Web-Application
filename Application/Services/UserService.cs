@@ -1,0 +1,74 @@
+﻿using AutoMapper;
+using Events.Application.DTO.RequestDTO;
+using Events.Application.DTO.ResponseDTO;
+using Events.Application.Exceptions;
+using Events.Application.Interfaces.Repositories;
+using Events.Application.Interfaces.Services;
+using Events.Application.Validators;
+using Events.Domain.Entities;
+
+namespace Events.Application.Services
+{
+    public class UserService(IUnitOfWork uow, IMapper mapper) : IUserService
+    {
+        private readonly IUserRepository repository = uow.UserRepository;
+
+        public Task<AuthenticateResponse?> AuthenticateAsync(UserRequestDto userRequest, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<UserResponseDto> GetUserAsync(int id, CancellationToken cancellationToken)
+        {
+            var user = await ServiceHelper.GetEntityAsync
+                (repository.GetByIdAsync, id, cancellationToken);
+
+            return mapper.Map<User, UserResponseDto>(user);
+        }
+
+        public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync(CancellationToken cancellationToken)
+        {
+            var users = await repository.GetAllAsync(cancellationToken);
+
+            return mapper.Map<IEnumerable<User>, IEnumerable<UserResponseDto>>(users);
+        }
+
+        public async Task<int> InsertUserAsync(UserRequestDto userDto, CancellationToken cancellationToken)
+        {
+            await ValidateCategory(userDto, cancellationToken);
+            var user = mapper.Map<UserRequestDto, User>(userDto);
+
+            return await repository.InsertAsync(user, cancellationToken);
+        }
+
+        public async Task UpdateUserAsync(int id, UserRequestDto userDto, CancellationToken cancellationToken)
+        {
+            await ValidateCategory(userDto, cancellationToken);
+
+            var user = await ServiceHelper.GetEntityAsync(repository.GetByIdAsync, id, cancellationToken);
+            mapper.Map(userDto, user);
+            repository.Update(user);
+
+            await uow.SaveAsync(cancellationToken);
+        }
+
+        public async Task DeleteUserAsync(int id, CancellationToken cancellationToken)
+        {
+            var user = await ServiceHelper.GetEntityAsync(repository.GetByIdAsync, id, cancellationToken);
+            repository.Delete(user);
+
+            await uow.SaveAsync(cancellationToken);
+        }
+
+        private async Task ValidateCategory(UserRequestDto user, CancellationToken cancellationToken)
+        {
+            UserRequestDtoValidator validator = new UserRequestDtoValidator();
+            var results = await validator.ValidateAsync(user);
+            if (!results.IsValid)
+            {
+                throw new ValidationException(results.Errors);
+            }
+        }
+
+    }
+}

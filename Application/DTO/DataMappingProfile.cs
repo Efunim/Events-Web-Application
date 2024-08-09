@@ -19,7 +19,7 @@ namespace Events.Application.DTO
             CreateMap<EventCategory, EventCategoryResponseDto>();
             CreateMap<Participant, ParticipantResponseDto>();
             CreateMap<User, UserResponseDto>();
-            CreateMap<Event, EventResponseDTO>()
+            CreateMap<Event, EventResponseDto>()
                 .ForMember(dest => dest.CurrentParticipants, opt => opt.MapFrom(src => src.Participants.Count));
 
             CreateMap<Location, LocationResponseDto>()

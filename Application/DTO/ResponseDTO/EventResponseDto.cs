@@ -1,6 +1,6 @@
 ﻿namespace Events.Application.DTO.ResponseDTO
 {
-    public class EventResponseDTO
+    public class EventResponseDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

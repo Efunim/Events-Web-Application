@@ -1,4 +1,5 @@
 ﻿using Events.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace Events.Application.Interfaces.Repositories
 {
@@ -9,5 +10,6 @@ namespace Events.Application.Interfaces.Repositories
         Task<int> InsertAsync(T entity, CancellationToken cancellationToken);
         void Update(T entity);
         void Delete(T entity);
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken);
     }
 }
