@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Events_Web_application.Infrastructure
 {
-    public class ValidationExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
+    public class ValidationExceptionHandler : IExceptionHandler
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception,
                 CancellationToken cancellationToken)
