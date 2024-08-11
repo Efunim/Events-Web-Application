@@ -1,7 +1,6 @@
 ﻿using Events.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Events.Infastructure.Data
 {
     public class ApplicationContext : DbContext
@@ -24,7 +23,24 @@ namespace Events.Infastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            var location = modelBuilder.Entity<Location>();
+            location.Property(l => l.Name).HasMaxLength(100);
+            location.Property(l => l.House).HasMaxLength(10);
 
+            var eventCategory = modelBuilder.Entity<EventCategory>();
+            eventCategory.Property(e => e.Name).HasMaxLength(50);
+
+            var @event = modelBuilder.Entity<Event>();
+            @event.Property(e => e.Name).HasMaxLength(100);
+            @event.Property(e => e.Description).HasMaxLength(8000);
+            @event.Property(e => e.ImagePath).HasMaxLength(1000);
+
+            var user = modelBuilder.Entity<User>();
+            user.Property(u => u.Name).HasMaxLength(100);
+            user.Property(u => u.Surname).HasMaxLength(100);
+            user.Property(u => u.Email).HasMaxLength(254);
+            user.Property(u => u.PasswordHash).HasMaxLength(64);
+            user.HasIndex(u => u.Email).IsUnique();
         }
     }
 }
