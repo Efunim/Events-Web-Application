@@ -23,11 +23,11 @@ namespace Events_Web_application.Controllers
         public async Task<IEnumerable<EventResponseDto>> GetAllEventsAsync(CancellationToken cancellationToken) =>
             await eventService.GetAllEventsAsync(cancellationToken);
 
-        [HttpGet(Name = "InsertEvent")]
+        [HttpPost(Name = "InsertEvent")]
         public async Task<int> InsertEventAsync(EventRequestDto eventDto, CancellationToken cancellationToken) =>
             await eventService.InsertEventAsync(eventDto, cancellationToken);
 
-        [HttpGet(Name = "UpdateEvent")]
+        [HttpPut(Name = "UpdateEvent")]
         public async Task UpdateEventAsync(int id, EventRequestDto eventDto, CancellationToken cancellationToken)
         {
             await eventService.UpdateEventAsync(id, eventDto, cancellationToken);
@@ -36,7 +36,7 @@ namespace Events_Web_application.Controllers
             
         }
 
-        [HttpGet(Name = "DeleteEvent")]
+        [HttpDelete(Name = "DeleteEvent")]
         public async Task DeleteEventAsync(int id, CancellationToken cancellationToken) =>
             await eventService.DeleteEventAsync(id, cancellationToken);
     }

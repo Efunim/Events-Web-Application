@@ -17,15 +17,15 @@ namespace Events_Web_application.Controllers
         public async Task<IEnumerable<LocationResponseDto>> GetAllLocationsAsync(CancellationToken cancellationToken) =>
             await locationService.GetAllLocationsAsync(cancellationToken);
 
-        [HttpGet(Name = "InsertLocation")]
+        [HttpPost(Name = "InsertLocation")]
         public async Task<int> InsertLocationAsync(LocationRequestDto LocationDto, CancellationToken cancellationToken) =>
             await locationService.InsertLocationAsync(LocationDto, cancellationToken);
 
-        [HttpGet(Name = "UpdateLocation")]
+        [HttpPut(Name = "UpdateLocation")]
         public async Task UpdateLocationAsync(int id, LocationRequestDto LocationDto, CancellationToken cancellationToken) =>
             await locationService.UpdateLocationAsync(id, LocationDto, cancellationToken);
 
-        [HttpGet(Name = "DeleteLocation")]
+        [HttpDelete(Name = "DeleteLocation")]
         public async Task DeleteLocationAsync(int id, CancellationToken cancellationToken) =>
             await locationService.DeleteLocationAsync(id, cancellationToken);
     }

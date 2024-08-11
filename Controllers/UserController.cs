@@ -36,15 +36,15 @@ namespace Events_Web_application.Controllers
         public async Task<IEnumerable<UserResponseDto>> GetAllUsersAsync(CancellationToken cancellationToken) =>
             await userService.GetAllUsersAsync(cancellationToken);
 
-        [HttpGet(Name = "InsertUser")]
+        [HttpPost(Name = "InsertUser")]
         public async Task<int> InsertUserAsync(UserRequestDto UserDto, CancellationToken cancellationToken) =>
             await userService.InsertUserAsync(UserDto, cancellationToken);
 
-        [HttpGet(Name = "UpdateUser")]
+        [HttpPut(Name = "UpdateUser")]
         public async Task UpdateUserAsync(int id, UserRequestDto UserDto, CancellationToken cancellationToken) =>
             await userService.UpdateUserAsync(id, UserDto, cancellationToken);
 
-        [HttpGet(Name = "DeleteUser")]
+        [HttpDelete(Name = "DeleteUser")]
         public async Task DeleteUserAsync(int id, CancellationToken cancellationToken) =>
             await userService.DeleteUserAsync(id, cancellationToken);
     }

@@ -18,15 +18,15 @@ namespace Events_Web_application.Controllers
         public async Task<IEnumerable<EventCategoryResponseDto>> GetAllEventCategoriesAsync(CancellationToken cancellationToken) =>
             await eventCategoryService.GetAllEventCategoriesAsync(cancellationToken);
 
-        [HttpGet(Name = "InsertEventCategory")]
+        [HttpPost(Name = "InsertEventCategory")]
         public async Task<int> InsertEventCategoryAsync(EventCategoryRequestDto eventCategoryDto, CancellationToken cancellationToken) =>
             await eventCategoryService.InsertEventCategoryAsync(eventCategoryDto, cancellationToken);
 
-        [HttpGet(Name = "UpdateEventCategory")]
+        [HttpPut(Name = "UpdateEventCategory")]
         public async Task UpdateEventCategoryAsync(int id, EventCategoryRequestDto eventCategoryDto, CancellationToken cancellationToken) =>
             await eventCategoryService.UpdateEventCategoryAsync(id, eventCategoryDto, cancellationToken);
 
-        [HttpGet(Name = "DeleteEventCategory")]
+        [HttpDelete(Name = "DeleteEventCategory")]
         public async Task DeleteEventCategoryAsync(int id, CancellationToken cancellationToken) =>
             await eventCategoryService.DeleteEventCategoryAsync(id, cancellationToken);
 

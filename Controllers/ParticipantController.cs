@@ -17,15 +17,15 @@ namespace Events_Web_application.Controllers
         public async Task<IEnumerable<ParticipantResponseDto>> GetAllParticipantsAsync(CancellationToken cancellationToken) =>
             await participantService.GetAllParticipantsAsync(cancellationToken);
 
-        [HttpGet(Name = "InsertParticipant")]
+        [HttpPost(Name = "InsertParticipant")]
         public async Task<int> InsertParticipantAsync(ParticipantRequestDto participantDto, CancellationToken cancellationToken) =>
             await participantService.InsertParticipantAsync(participantDto, cancellationToken);
 
-        [HttpGet(Name = "UpdateParticipant")]
+        [HttpPut(Name = "UpdateParticipant")]
         public async Task UpdateParticipantAsync(int id, ParticipantRequestDto participantDto, CancellationToken cancellationToken) =>
             await participantService.UpdateParticipantAsync(id, participantDto, cancellationToken);
 
-        [HttpGet(Name = "DeleteParticipant")]
+        [HttpDelete(Name = "DeleteParticipant")]
         public async Task DeleteParticipantAsync(int id, CancellationToken cancellationToken) =>
             await participantService.DeleteParticipantAsync(id, cancellationToken);
     }
