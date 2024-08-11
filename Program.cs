@@ -42,6 +42,13 @@ var app = builder.Build();
 app.UseExceptionHandler();
 app.UseMiddleware<JwtMiddleware>();
 
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Events API v1");
+    c.RoutePrefix = string.Empty;
+});
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
@@ -49,7 +56,6 @@ app.MapGet("/exception", () =>
 {
     throw new ArgumentNullException("There is nothing. Literally");
 });
-app.MapGet("/", () => "Hello World!");
 
 app.MapControllers();
 
