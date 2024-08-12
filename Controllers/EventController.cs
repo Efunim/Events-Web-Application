@@ -15,6 +15,15 @@ namespace Events_Web_application.Controllers
         public async Task<EventResponseDto> GetEventAsync(int id, CancellationToken cancellationToken) =>
             await eventService.GetEventAsync(id, cancellationToken);
 
+        [HttpGet(Name = "GetEventPage")]
+        public async Task<IEnumerable<EventResponseDto>> GetEventsPage(CancellationToken cancellationToken,
+            [FromQuery] int pageIndex = 0,
+            [FromQuery] int pageSize = 2)
+        {
+            return await eventService.GetPageAsync(pageIndex, pageSize, cancellationToken);
+        }
+
+
         [HttpGet(Name = "GetEventsByCriteria")]
         public async Task<IEnumerable<EventResponseDto>> GetEventsByCriteriaAsync(EventFilter eventFilter, CancellationToken cancellationToken) =>
             await eventService.GetEventsByCriteriaAsync(eventFilter, cancellationToken);

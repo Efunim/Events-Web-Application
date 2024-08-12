@@ -7,6 +7,7 @@ namespace Events.Application.Interfaces.Services
     public interface IEventService
     {
         Task<EventResponseDto> GetEventAsync(int id, CancellationToken cancellationToken);
+        Task<IEnumerable<EventResponseDto>> GetPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken);
         Task<IEnumerable<EventResponseDto>> GetEventsByCriteriaAsync(EventFilter eventFilter, CancellationToken cancellationToken);
         Task<IEnumerable<EventResponseDto>> GetAllEventsAsync(CancellationToken cancellationToken);
         Task<int> InsertEventAsync(EventRequestDto eventDto, CancellationToken cancellationToken);

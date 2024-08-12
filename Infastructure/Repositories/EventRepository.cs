@@ -10,7 +10,7 @@ namespace Events.Infastructure.Repositories
     {
         public EventRepository(ApplicationContext context) : base(context) { }
 
-        public async Task<List<Event>> GetByCriteriaAsync(EventFilter filter)
+        public async Task<IEnumerable<Event>> GetByCriteriaAsync(EventFilter filter)
         {
             var query = _context.Events.AsQueryable();
 
@@ -36,5 +36,12 @@ namespace Events.Infastructure.Repositories
 
             return await query.ToListAsync();
         }
+
+        public async Task<IEnumerable<Event>> GetPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken) =>
+            await _context.Set<Event>()
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
     }
 }

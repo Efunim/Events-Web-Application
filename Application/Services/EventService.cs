@@ -22,6 +22,18 @@ namespace Events.Application.Services
             return mapper.Map<Event, EventResponseDto>(@event);
         }
 
+        public async Task<IEnumerable<EventResponseDto>> GetPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
+        {
+            if (pageIndex < 0 || pageSize <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Page size or index is invalid");
+            }
+
+            var eventsPage = await repository.GetPageAsync(pageIndex, pageSize, cancellationToken);
+
+            return mapper.Map<IEnumerable<Event>, IEnumerable<EventResponseDto>>(eventsPage);
+        }
+
         public async Task<IEnumerable<EventResponseDto>> GetAllEventsAsync(CancellationToken cancellationToken)
         {
             var events = await repository.GetAllAsync(cancellationToken);
