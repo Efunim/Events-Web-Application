@@ -34,7 +34,10 @@ namespace Events.Application.Services
             await ValidateCategory(eventDto, cancellationToken);
             var @event = mapper.Map<EventRequestDto, Event>(eventDto);
 
-            return await repository.InsertAsync(@event, cancellationToken);
+            var id = await repository.InsertAsync(@event, cancellationToken);
+            await uow.SaveAsync(cancellationToken);
+
+            return id;
         }
 
         public async Task UpdateEventAsync(int id, EventRequestDto eventDto, CancellationToken cancellationToken)

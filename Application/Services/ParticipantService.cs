@@ -33,7 +33,10 @@ namespace Events.Application.Services
             await ValidateCategory(participantDto, cancellationToken);
             var participant = mapper.Map<ParticipantRequestDto, Participant>(participantDto);
 
-            return await repository.InsertAsync(participant, cancellationToken);
+            var id = await repository.InsertAsync(participant, cancellationToken);
+            await uow.SaveAsync(cancellationToken);
+
+            return id;
         }
 
         public async Task UpdateParticipantAsync(int id, ParticipantRequestDto participantDto, CancellationToken cancellationToken)
@@ -63,11 +66,6 @@ namespace Events.Application.Services
             {
                 throw new ValidationException(results.Errors);
             }
-        }
-
-        public Task SendEmailAsync(int id, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }

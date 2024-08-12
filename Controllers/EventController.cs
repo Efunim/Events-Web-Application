@@ -28,13 +28,8 @@ namespace Events_Web_application.Controllers
             await eventService.InsertEventAsync(eventDto, cancellationToken);
 
         [HttpPut(Name = "UpdateEvent")]
-        public async Task UpdateEventAsync(int id, EventRequestDto eventDto, CancellationToken cancellationToken)
-        {
+        public async Task UpdateEventAsync(int id, EventRequestDto eventDto, CancellationToken cancellationToken) =>
             await eventService.UpdateEventAsync(id, eventDto, cancellationToken);
-
-            var @event = await eventService.GetEventAsync(id, cancellationToken);
-            
-        }
 
         [HttpDelete(Name = "DeleteEvent")]
         public async Task DeleteEventAsync(int id, CancellationToken cancellationToken) =>

@@ -33,7 +33,10 @@ namespace Events.Application.Services
             await ValidateCategory(locationDto, cancellationToken);
             var location = mapper.Map<LocationRequestDto, Location>(locationDto);
 
-            return await repository.InsertAsync(location, cancellationToken);
+            var id = await repository.InsertAsync(location, cancellationToken);
+            await uow.SaveAsync(cancellationToken);
+
+            return id;
         }
 
         public async Task UpdateLocationAsync(int id, LocationRequestDto locationDto, CancellationToken cancellationToken)

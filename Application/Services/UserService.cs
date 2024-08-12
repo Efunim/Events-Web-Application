@@ -38,7 +38,10 @@ namespace Events.Application.Services
             await ValidateCategory(userDto, cancellationToken);
             var user = mapper.Map<UserRequestDto, User>(userDto);
 
-            return await repository.InsertAsync(user, cancellationToken);
+            var id = await repository.InsertAsync(user, cancellationToken);
+            await uow.SaveAsync(cancellationToken);
+
+            return id;
         }
 
         public async Task UpdateUserAsync(int id, UserRequestDto userDto, CancellationToken cancellationToken)

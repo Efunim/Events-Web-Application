@@ -8,6 +8,7 @@ using FluentValidation;
 using Events.Infastructure.Authentification;
 using Events.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Events.Application.DTO;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<ApplicationContext>(options => 
     { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); });
 
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddAutoMapper(typeof(DataMappingProfile));
 
 builder.Services.AddControllers();
 

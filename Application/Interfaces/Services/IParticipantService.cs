@@ -10,6 +10,5 @@ namespace Events.Application.Interfaces.Services
         Task<int> InsertParticipantAsync(ParticipantRequestDto participantDto, CancellationToken cancellationToken);
         Task UpdateParticipantAsync(int id, ParticipantRequestDto ParticipantDto, CancellationToken cancellationToken);
         Task DeleteParticipantAsync(int id, CancellationToken cancellationToken);
-        Task SendEmailAsync(int id, CancellationToken cancellationToken);
     }
 }
