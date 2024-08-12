@@ -41,4 +41,8 @@
     <ProjectReference Include="Infastructure\Events.Infastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="uploads\images\" />
+  </ItemGroup>
+
 </Project>

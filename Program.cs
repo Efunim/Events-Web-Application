@@ -9,6 +9,7 @@ using Events.Infastructure.Authentification;
 using Events.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Events.Application.DTO;
+using Events.Infastructure.Data.Files;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,8 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IParticipantService, ParticipantService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IFileManager, FileManager>();
 
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
