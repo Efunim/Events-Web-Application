@@ -2,9 +2,10 @@
 using Events.Application.DTO.RequestDTO;
 using Events.Application.DTO.ResponseDTO;
 using Events.Application.Exceptions;
-using Events.Application.Filters;
 using Events.Application.Interfaces.Repositories;
 using Events.Application.Interfaces.Services;
+using Events.Application.Specifications;
+using Events.Application.Specifications.EventSpecifications;
 using Events.Application.Validators;
 using Events.Domain.Entities;
 
@@ -81,9 +82,11 @@ namespace Events.Application.Services
             }
         }
 
-        public Task<IEnumerable<EventResponseDto>> GetEventsByCriteriaAsync(EventFilter eventFilter, CancellationToken cancellationToken)
+        public IEnumerable<EventResponseDto> GetEventsByCriteria(Specification<Event>? specification, int pageIndex, int pageSize)
         {
-            throw new NotImplementedException();
+            var @events = repository.GetByCriteria(specification, pageIndex, pageSize).ToList();
+
+            return mapper.Map<IEnumerable<EventResponseDto>>(@events);
         }
     }
 }

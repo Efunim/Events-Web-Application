@@ -1,9 +1,10 @@
 ﻿using Events.Application.DTO.RequestDTO;
 using Events.Application.DTO.ResponseDTO;
-using Events.Application.Filters;
 using Events.Application.Interfaces.Services;
+using Events.Application.Specifications;
+using Events.Application.Specifications.EventSpecifications;
+using Events.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Events_Web_application.Controllers
@@ -25,8 +26,21 @@ namespace Events_Web_application.Controllers
         }
 
         [HttpGet(Name = "GetEventsByCriteria")]
-        public async Task<IEnumerable<EventResponseDto>> GetEventsByCriteriaAsync(EventFilter eventFilter, CancellationToken cancellationToken) =>
-            await eventService.GetEventsByCriteriaAsync(eventFilter, cancellationToken);
+        public IEnumerable<EventResponseDto> GetEventsByCriteriaAsync(
+            CancellationToken cancellationToken,
+            [FromQuery] IEnumerable<int>? categoryIs = null,
+            [FromQuery] string name = "",
+            [FromQuery] int? cityId = null,
+            [FromQuery] DateTime? startDate = null,
+            [FromQuery] DateTime? endDate = null,
+            [FromQuery] int pageIndex = 0,
+            [FromQuery] int pageSize = 2)
+        {
+            Specification<Event>? specification = new EventSpecification(
+                categoryIs, name, cityId, startDate, endDate);
+
+            return eventService.GetEventsByCriteria(specification, pageIndex, pageSize );
+        }
 
         [HttpGet(Name = "GetAllEvents")]
         public async Task<IEnumerable<EventResponseDto>> GetAllEventsAsync(CancellationToken cancellationToken) =>

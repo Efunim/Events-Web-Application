@@ -22,6 +22,7 @@ namespace Events.Infastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Street>().ToTable("Streets");
 
             var location = modelBuilder.Entity<Location>();
             location.Property(l => l.Name).HasMaxLength(100);
