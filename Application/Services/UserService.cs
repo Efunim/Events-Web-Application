@@ -6,17 +6,13 @@ using Events.Application.Interfaces.Repositories;
 using Events.Application.Interfaces.Services;
 using Events.Application.Validators;
 using Events.Domain.Entities;
+using System.Security.Claims;
 
 namespace Events.Application.Services
 {
     public class UserService(IUnitOfWork uow, IMapper mapper) : IUserService
     {
         private readonly IUserRepository repository = uow.UserRepository;
-
-        public Task<AuthenticateResponse?> AuthenticateAsync(UserRequestDto userRequest, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<UserResponseDto> GetUserAsync(int id, CancellationToken cancellationToken)
         {
@@ -35,7 +31,7 @@ namespace Events.Application.Services
 
         public async Task<int> InsertUserAsync(UserRequestDto userDto, CancellationToken cancellationToken)
         {
-            await ValidateCategory(userDto, cancellationToken);
+            await ValidateUser(userDto, cancellationToken);
             var user = mapper.Map<UserRequestDto, User>(userDto);
 
             var id = await repository.InsertAsync(user, cancellationToken);
@@ -46,7 +42,7 @@ namespace Events.Application.Services
 
         public async Task UpdateUserAsync(int id, UserRequestDto userDto, CancellationToken cancellationToken)
         {
-            await ValidateCategory(userDto, cancellationToken);
+            await ValidateUser(userDto, cancellationToken);
 
             var user = await ServiceHelper.GetEntityAsync(repository.GetByIdAsync, id, cancellationToken);
             mapper.Map(userDto, user);
@@ -63,7 +59,7 @@ namespace Events.Application.Services
             await uow.SaveAsync(cancellationToken);
         }
 
-        private async Task ValidateCategory(UserRequestDto user, CancellationToken cancellationToken)
+        private async Task ValidateUser(UserRequestDto user, CancellationToken cancellationToken)
         {
             UserRequestDtoValidator validator = new UserRequestDtoValidator();
             var results = await validator.ValidateAsync(user);
@@ -72,6 +68,5 @@ namespace Events.Application.Services
                 throw new ValidationException(results.Errors);
             }
         }
-
     }
 }

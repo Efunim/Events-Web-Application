@@ -27,6 +27,7 @@ namespace Events.Application.Validators
 
             RuleFor(e => e.ImagePath)
                 .NotEmpty()
+                .Must(BeAnExistingImage)
                     .WithMessage("Couldn't find image on server");
 
         }
@@ -34,6 +35,11 @@ namespace Events.Application.Validators
         protected bool BeValidDate(DateTime dateTime)  
         {
             return dateTime > (DateTime.Now.AddDays(1));
+        }
+
+        protected bool BeAnExistingImage(string imagePath)
+        {
+            return File.Exists($"{Directory.GetCurrentDirectory()}\\uploads\\{imagePath}");
         }
     }
 }

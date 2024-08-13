@@ -10,6 +10,8 @@ using Events.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Events.Application.DTO;
 using Events.Infastructure.Data.Files;
+using Microsoft.AspNetCore.Authorization;
+using Events.Infastructure.Authentification.Policies;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +26,13 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(DataMappingProfile));
 
+builder.Services.AddSingleton<IAuthorizationHandler, MinimumAgeRequirementHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AtLeast12", policy =>
+        policy.Requirements.Add(new MinimumAgeRequirement(12)));
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -32,6 +41,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IParticipantService, ParticipantService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthentificationService, AuthentificationService>();
 
 builder.Services.AddScoped<IFileManager, FileManager>();
 

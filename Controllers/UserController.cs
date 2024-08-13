@@ -2,6 +2,7 @@
 using Events.Application.DTO.ResponseDTO;
 using Events.Application.Interfaces.Services;
 using Events.Application.Services;
+using Events.Infastructure.Authentification;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,22 +10,25 @@ namespace Events_Web_application.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class UserController(IUserService userService) : ControllerBase
+    public class UserController(IUserService userService, IAuthentificationService authService) : ControllerBase
     {
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserRequestDto userDto, CancellationToken token)
         {
+            var originalPassword = userDto.Password;
+            userDto.Password = authService.HashPassword(userDto.Password);
             var userId = await userService.InsertUserAsync(userDto, token);
-            var userResponse = await userService.GetUserAsync(userId, token);
 
+            userDto.Password = originalPassword;
             return await Login(userDto, token);
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login(UserRequestDto userDto, CancellationToken token)
         {
-            var response = await userService.AuthenticateAsync(userDto, token);
+            var response = await authService.AuthenticateAsync(userDto, token);
             if (response == null) return BadRequest(response);
+
             return Ok(response);
         }
 
