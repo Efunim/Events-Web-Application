@@ -1,11 +1,8 @@
-﻿using Events.Application.DTO.RequestDTO;
+﻿using Events.Application;
+using Events.Application.DTO.RequestDTO;
 using Events.Application.DTO.ResponseDTO;
 using Events.Application.Interfaces.Services;
-using Events.Application.Services;
 using Events.Infastructure.Authentification;
-using Events.Infastructure.Authentification.Policies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Events_Web_application.Controllers
@@ -26,11 +23,24 @@ namespace Events_Web_application.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(UserRequestDto userDto, CancellationToken token)
+        public async Task<IActionResult> Login(UserRequestDto userDto, CancellationToken cancellationToken)
         {
-            var response = await authService.AuthenticateAsync(userDto, token);
+            var refreshToken = Request.Cookies["refreshToken"];
+            AuthenticateResponse? response = null;
+
+            if (!String.IsNullOrEmpty(refreshToken))
+            {
+                response = await authService.ValidateRefreshTokenAsync(refreshToken, cancellationToken);
+            }
+
+            if (response == null)
+            {
+                response = await authService.AuthenticateAsync(userDto, cancellationToken);
+            }
+
             if (response == null) return BadRequest(response);
 
+            SetRefreshTokenInCookies(response.RefreshToken);
             return Ok(response);
         }
 
@@ -59,5 +69,18 @@ namespace Events_Web_application.Controllers
         [HttpDelete(Name = "DeleteUser")]
         public async Task DeleteUserAsync(int id, CancellationToken cancellationToken) =>
             await userService.DeleteUserAsync(id, cancellationToken);
+
+        private void SetRefreshTokenInCookies(string refreshToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+        }
     }
 }

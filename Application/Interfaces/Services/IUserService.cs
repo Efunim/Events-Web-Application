@@ -9,6 +9,7 @@ namespace Events.Application.Interfaces.Services
         Task<IEnumerable<UserResponseDto>> GetAllUsersAsync(CancellationToken cancellationToken);
         Task<int> InsertUserAsync(UserRequestDto UserDto, CancellationToken cancellationToken);
         Task UpdateUserAsync(int id, UserRequestDto userDto, CancellationToken cancellationToken);
+        Task StoreRefreshTokenAsync(int userId, string refreshToken, CancellationToken cancellationToken);
         Task DeleteUserAsync(int id, CancellationToken cancellationToken);
     }
 }

@@ -3,7 +3,6 @@ using Events.Application;
 using Events.Application.DTO.RequestDTO;
 using Events.Application.DTO.ResponseDTO;
 using Events.Application.Interfaces.Repositories;
-using Events.Application.Interfaces.Services;
 using Events.Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -25,12 +24,36 @@ namespace Events.Infastructure.Authentification
 
             if (user == null) return null;
 
+            var newRefreshToken = GenerateRefreshToken();
+            var response = GenerateResponse(user, newRefreshToken);
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
+
+            _userRepository.Update(user);
+            await uow.SaveAsync(cancellationToken);
+
+            return response;
+        }
+
+        public async Task<AuthenticateResponse?> ValidateRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+        {
+            var user = (await _userRepository.GetAllAsync(cancellationToken)).SingleOrDefault(
+                u => u.RefreshToken == refreshToken && u.RefreshTokenExpiry > DateTime.UtcNow);
+
+            if (user == null) return null;
+
+            return GenerateResponse(user, refreshToken);
+        }
+
+        private AuthenticateResponse GenerateResponse(User user, string refreshToken)
+        {
             var token = GenerateJwtToken(user);
 
             return new AuthenticateResponse
             {
                 User = mapper.Map<UserResponseDto>(user),
-                Token = token
+                Token = token,
+                RefreshToken = refreshToken
             };
         }
 
@@ -67,6 +90,18 @@ namespace Events.Infastructure.Authentification
             });
 
             return tokenHandler.WriteToken(token);
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+
+            using (var numberGenerator = RandomNumberGenerator.Create())
+            {
+                numberGenerator.GetBytes(randomNumber);
+            }
+
+            return Convert.ToBase64String(randomNumber);
         }
     }
 }

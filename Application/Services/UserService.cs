@@ -6,7 +6,6 @@ using Events.Application.Interfaces.Repositories;
 using Events.Application.Interfaces.Services;
 using Events.Application.Validators;
 using Events.Domain.Entities;
-using System.Security.Claims;
 
 namespace Events.Application.Services
 {
@@ -48,6 +47,17 @@ namespace Events.Application.Services
             mapper.Map(userDto, user);
             repository.Update(user);
 
+            await uow.SaveAsync(cancellationToken);
+        }
+
+        public async Task StoreRefreshTokenAsync(int id, string refreshToken, CancellationToken cancellationToken)
+        {
+            var user = await ServiceHelper.GetEntityAsync
+                (repository.GetByIdAsync, id, cancellationToken);
+
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(30);
+            repository.Update(user);
             await uow.SaveAsync(cancellationToken);
         }
 

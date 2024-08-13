@@ -8,6 +8,7 @@ namespace Events.Infastructure.Authentification
     public interface IAuthentificationService
     {
         Task<AuthenticateResponse?> AuthenticateAsync(UserRequestDto userRequest, CancellationToken cancellationToken);
+        Task<AuthenticateResponse?> ValidateRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
         string HashPassword(string password);
     }
 }

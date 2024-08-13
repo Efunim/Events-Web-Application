@@ -8,6 +8,8 @@
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public bool IsAdmin { get; set; }
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiry { get; set; }
 
         public List<Participant> Participants { get; private set; } = [];
     }
