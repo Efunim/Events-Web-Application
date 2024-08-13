@@ -55,8 +55,14 @@ namespace Events.Infastructure.Authentification
             var token = tokenHandler.CreateToken(
             new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity([new Claim("id", user.Id.ToString())]),
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim("id", user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
+                }),
                 Expires = DateTime.UtcNow.AddDays(7),
+                Issuer = AuthConfiguration.ISSUER,
+                Audience = AuthConfiguration.AUDIENCE,
                 SigningCredentials = new SigningCredentials(AuthConfiguration.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256Signature)
             });
 

@@ -3,6 +3,8 @@ using Events.Application.DTO.ResponseDTO;
 using Events.Application.Interfaces.Services;
 using Events.Application.Services;
 using Events.Infastructure.Authentification;
+using Events.Infastructure.Authentification.Policies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,12 +43,18 @@ namespace Events_Web_application.Controllers
             await userService.GetAllUsersAsync(cancellationToken);
 
         [HttpPost(Name = "InsertUser")]
-        public async Task<int> InsertUserAsync(UserRequestDto UserDto, CancellationToken cancellationToken) =>
-            await userService.InsertUserAsync(UserDto, cancellationToken);
+        public async Task<int> InsertUserAsync(UserRequestDto userDto, CancellationToken cancellationToken)
+        {
+            userDto.Password = authService.HashPassword(userDto.Password);
+            return await userService.InsertUserAsync(userDto, cancellationToken);
+        }
 
         [HttpPut(Name = "UpdateUser")]
-        public async Task UpdateUserAsync(int id, UserRequestDto UserDto, CancellationToken cancellationToken) =>
-            await userService.UpdateUserAsync(id, UserDto, cancellationToken);
+        public async Task UpdateUserAsync(int id, UserRequestDto userDto, CancellationToken cancellationToken)
+        {
+            userDto.Password = authService.HashPassword(userDto.Password);
+            await userService.UpdateUserAsync(id, userDto, cancellationToken);
+        }
 
         [HttpDelete(Name = "DeleteUser")]
         public async Task DeleteUserAsync(int id, CancellationToken cancellationToken) =>

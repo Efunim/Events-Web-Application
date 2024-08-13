@@ -2,6 +2,7 @@
 using Events.Application.DTO.ResponseDTO;
 using Events.Application.Filters;
 using Events.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,14 +33,17 @@ namespace Events_Web_application.Controllers
             await eventService.GetAllEventsAsync(cancellationToken);
 
         [HttpPost(Name = "InsertEvent")]
+        [Authorize(Policy = "BeAdmin")]
         public async Task<int> InsertEventAsync(EventRequestDto eventDto, CancellationToken cancellationToken) =>
             await eventService.InsertEventAsync(eventDto, cancellationToken);
 
         [HttpPut(Name = "UpdateEvent")]
+        [Authorize(Policy = "BeAdmin")]
         public async Task UpdateEventAsync(int id, EventRequestDto eventDto, CancellationToken cancellationToken) =>
             await eventService.UpdateEventAsync(id, eventDto, cancellationToken);
 
         [HttpDelete(Name = "DeleteEvent")]
+        [Authorize(Policy = "BeAdmin")]
         public async Task DeleteEventAsync(int id, CancellationToken cancellationToken) =>
             await eventService.DeleteEventAsync(id, cancellationToken);
     }

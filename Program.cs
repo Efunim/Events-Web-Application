@@ -1,17 +1,20 @@
+using Events.Application.DTO;
 using Events.Application.Interfaces.Repositories;
 using Events.Application.Interfaces.Services;
 using Events.Application.Services;
+using Events.Infastructure.Authentification;
+using Events.Infastructure.Authentification.Policies;
+using Events.Infastructure.Data;
+using Events.Infastructure.Data.Files;
 using Events.Infastructure.Repositories;
 using Events_Web_application.Infrastructure;
-using System.Reflection;
 using FluentValidation;
-using Events.Infastructure.Authentification;
-using Events.Infastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Events.Application.DTO;
-using Events.Infastructure.Data.Files;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Events.Infastructure.Authentification.Policies;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,17 +24,37 @@ builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-builder.Services.AddDbContext<ApplicationContext>(options => 
+builder.Services.AddDbContext<ApplicationContext>(options =>
     { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); });
 
 builder.Services.AddAutoMapper(typeof(DataMappingProfile));
 
-builder.Services.AddSingleton<IAuthorizationHandler, MinimumAgeRequirementHandler>();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidIssuer = AuthConfiguration.ISSUER,
+        ValidAudience = AuthConfiguration.AUDIENCE,
+        IssuerSigningKey = AuthConfiguration.GetSymmetricSecurityKey(),
+        ValidateIssuerSigningKey = true
+    };
+});
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AtLeast12", policy =>
-        policy.Requirements.Add(new MinimumAgeRequirement(12)));
+    options.AddPolicy("BeAdmin", policy =>
+    {
+        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+        policy.Requirements.Add(new RoleRequirement());
+    });
 });
+builder.Services.AddSingleton<IAuthorizationHandler, RoleRequimentHandler>();
 
 builder.Services.AddControllers();
 
@@ -49,7 +72,32 @@ builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -64,6 +112,8 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/exception", () =>
