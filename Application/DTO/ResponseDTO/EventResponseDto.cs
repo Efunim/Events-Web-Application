@@ -9,7 +9,6 @@
         public int LocationId { get; set; }
         public int CategoryId { get; set; }
         public int MaxParticipants { get; set; }
-        public int CurrentParticipants { get; set; }
         public string ImagePath { get; set; }
     }
 

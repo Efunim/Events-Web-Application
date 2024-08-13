@@ -19,12 +19,9 @@ namespace Events.Application.DTO
             CreateMap<EventCategory, EventCategoryResponseDto>();
             CreateMap<Participant, ParticipantResponseDto>();
             CreateMap<User, UserResponseDto>();
-            CreateMap<Event, EventResponseDto>()
-                .ForMember(dest => dest.CurrentParticipants, opt => opt.MapFrom(src => src.Participants.Count));
+            CreateMap<Event, EventResponseDto>();
 
-            CreateMap<Location, LocationResponseDto>()
-                .ForMember(dest => dest.FullAddress, opt
-                => opt.MapFrom(src => $"{src.Street.Name} {src.House}, {src.Street.City.Name}, {src.Street.City.Country.Name}"));
+            CreateMap<Location, LocationResponseDto>();
         }
     }
 }
