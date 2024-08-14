@@ -5,8 +5,8 @@ namespace Events.Application.Specifications.EventSpecifications
     public class EventSpecification : Specification<Event>
     {
         public EventSpecification(
-            IEnumerable<int>? categoryIds, string name, int? cityId,
-            DateTime? startDate, DateTime? endDate)
+            IEnumerable<int>? categoryIds = null, string name = "", int? cityId = null,
+            DateTime? startDate = null, DateTime? endDate = null)
             : base(e =>
                 (categoryIds == null || !categoryIds.Any() || categoryIds.Contains(e.CategoryId)) &&
                 (string.IsNullOrEmpty(name) || e.Name.ToLower().Contains(name.ToLower())) &&

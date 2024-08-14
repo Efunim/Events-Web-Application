@@ -7,7 +7,10 @@ namespace Events.Application.Validators
     {
         public UserRequestDtoValidator() 
         {
+            RuleLevelCascadeMode = CascadeMode.Stop;
             RuleFor(u => u.Name)
+                .NotNull()
+                    .WithMessage("Name cannot be null")
                 .NotEmpty()
                     .WithMessage("Name is required")
                 .Length(2,50)
@@ -16,12 +19,16 @@ namespace Events.Application.Validators
                     .WithMessage("Name must contain only letters");
 
             RuleFor(u => u.Surname)
+                .NotNull()
+                    .WithMessage("Surname cannot be null")
                 .NotEmpty()
-                    .WithMessage("Surname is required")
+                    .WithMessage("Surname cannot be empty")
                 .Must(BeAValidName)
                     .WithMessage("Surname must contain only letters");
 
             RuleFor(u => u.Birthday)
+                .NotNull()
+                    .WithMessage("Birthday cannot be null")
                 .NotEmpty()
                     .WithMessage("Birthday is required")
                 .Must(BeAValidAge)
@@ -39,10 +46,15 @@ namespace Events.Application.Validators
             return str.All(char.IsLetter);
         }
 
-        protected bool BeAValidAge(DateTime birthday)
+        protected bool BeAValidAge(DateTime? birthday)
         {
+            if (!birthday.HasValue)
+            {
+                return false; // Возвращаем false, если дата рождения не указана
+            }
+
             var currentDate = DateTime.Today;
-            var age = currentDate.Year - birthday.Year;
+            var age = currentDate.Year - birthday.Value.Year;
 
             return age >= 12 && age <= 100;
         }

@@ -16,7 +16,7 @@ namespace Events.Application.Validators
 
         protected bool BeAValidName(string str)
         {
-            return str.All(char.IsLetter);
+            return str.All(c => char.IsLetter(c) || char.IsWhiteSpace(c));
         }
     }
 }

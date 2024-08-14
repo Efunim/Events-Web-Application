@@ -83,7 +83,7 @@ namespace Events.Infastructure.Authentification
                     new Claim("id", user.Id.ToString()),
                     new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User")
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddHours(7),
                 Issuer = AuthConfiguration.ISSUER,
                 Audience = AuthConfiguration.AUDIENCE,
                 SigningCredentials = new SigningCredentials(AuthConfiguration.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256Signature)
