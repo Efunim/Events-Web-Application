@@ -1,5 +1,5 @@
-﻿using Events.Application.Interfaces.Repositories;
-using Events.Domain.Entities;
+﻿using Events.Domain.Entities;
+using Events.Domain.Repositories;
 using Events.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -18,8 +18,11 @@ namespace Events.Infastructure.Repositories
         public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken)
             => await _context.Set<T>().FindAsync([id], cancellationToken);
 
-        public virtual async Task<List<T>> GetAllAsync(CancellationToken cancellationToken)
-            => await _context.Set<T>().ToListAsync(cancellationToken);
+        public async Task<List<T>> GetPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken) =>
+            await _context.Set<T>()
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
 
         public virtual async Task<int> InsertAsync(T entity, CancellationToken cancellationToken)
         {

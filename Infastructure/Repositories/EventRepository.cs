@@ -1,7 +1,6 @@
-﻿using Events.Application.Interfaces.Repositories;
-using Events.Application.Specifications;
-using Events.Application.Specifications.EventSpecifications;
-using Events.Domain.Entities;
+﻿using Events.Domain.Entities;
+using Events.Domain.Repositories;
+using Events.Domain.Specifications;
 using Events.Infastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,17 +10,12 @@ namespace Events.Infastructure.Repositories
     {
         public EventRepository(ApplicationContext context) : base(context) { }
 
-        public IEnumerable<Event> GetByCriteria(Specification<Event> specification, int pageIndex, int pageSize)
+        public async Task<IEnumerable<Event>> GetByCriteriaAsync(ISpecification<Event> specification, int pageIndex, int pageSize, CancellationToken cancellationToken)
         {
-            return SpecificationQueryBuilder
-                .GetQuery(_context.Events, specification, pageIndex, pageSize);
-        }
-
-        public async Task<IEnumerable<Event>> GetPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken) =>
-            await _context.Set<Event>()
+            return await specification.Apply(_context.Set<Event>())
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync(cancellationToken);
-
+        }
     }
 }

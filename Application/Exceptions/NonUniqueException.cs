@@ -6,8 +6,7 @@ namespace Events.Application.Exceptions
     public class NonUniqueException : BaseException
     {
         public NonUniqueException(
-            string message = "Value is not unique", 
-            HttpStatusCode statusCode = HttpStatusCode.BadRequest)
-            : base(message, statusCode) { }
+            string message = "Value is not unique")
+            : base(message) { }
     }
 }

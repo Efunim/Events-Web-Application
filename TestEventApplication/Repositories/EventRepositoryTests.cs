@@ -1,14 +1,10 @@
-﻿using Events.Application.Specifications;
-using Events.Application.Specifications.EventSpecifications;
+﻿using Events.Domain.Specifications;
+using Events.Domain.Specifications.EventSpecifications;
 using Events.Domain.Entities;
 using Events.Infastructure.Data;
 using Events.Infastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace TestEventApplication.Repositories
 {
@@ -84,7 +80,7 @@ namespace TestEventApplication.Repositories
         }
 
         [Fact]
-        public void GetByCriteria_ReturnsCorrectEvents()
+        public async Task GetByCriteria_ReturnsCorrectEvents()
         {
             // Arrange
             var repository = new EventRepository(context);
@@ -129,16 +125,16 @@ namespace TestEventApplication.Repositories
             context.Events.AddRange(events);
             context.SaveChanges();
 
-            var specification = new EventSpecification(name: "event");
+            var specification = new EventNameSpecification(name: "event");
             var pageIndex = 0;
             var pageSize = 3;
 
             // Act
-            var result = repository.GetByCriteria(specification, pageIndex, pageSize).ToList();
+            var result = await repository.GetByCriteriaAsync(specification, pageIndex, pageSize, CancellationToken.None);
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(events.Count, result.Count);
+            Assert.Equal(events.Count, result.Count());
             Assert.Contains(result, e => e.Name == events[0].Name);
             Assert.Contains(result, e => e.Name == events[1].Name);
             Assert.Contains(result, e => e.Name == events[2].Name);

@@ -1,4 +1,4 @@
-﻿using Events.Application.Interfaces.Repositories;
+﻿using Events.Domain.Repositories;
 using Events.Domain.Exceptions;
 using Events.Infastructure.Data;
 using Events.Infastructure.Repositories;
@@ -9,7 +9,7 @@ namespace TestEventApplication.Repositories
     public class GenericRepositoryTests
     {
         private readonly ApplicationContext context;
-        public GenericRepositoryTests() 
+        public GenericRepositoryTests()
         {
             DbContextOptionsBuilder dbOptions = new DbContextOptionsBuilder()
                 .UseInMemoryDatabase(
@@ -84,9 +84,9 @@ namespace TestEventApplication.Repositories
                 );
             await context.SaveChangesAsync(CancellationToken.None);
 
-            var locations = await locationRep.GetAllAsync(CancellationToken.None);
+            var locations = await locationRep.GetPageAsync(0, 2, CancellationToken.None);
 
-            Assert.True(locations.Count >= 3);
+            Assert.True(locations.Count == 2);
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace TestEventApplication.Repositories
 
             locationRep.Delete(location);
             await context.SaveChangesAsync(CancellationToken.None);
-            
+
             location = await locationRep.GetByIdAsync(id, CancellationToken.None);
 
             Assert.Null(location);

@@ -50,7 +50,7 @@ namespace Events.Application.Validators
         {
             if (!birthday.HasValue)
             {
-                return false; // Возвращаем false, если дата рождения не указана
+                return false;
             }
 
             var currentDate = DateTime.Today;

@@ -1,4 +1,6 @@
-﻿namespace Events.Application.DTO.ResponseDTO
+﻿using Events.Application.DTO.BaseDTO;
+
+namespace Events.Application.DTO.ResponseDTO
 {
     public class LocationResponseDto
     {
