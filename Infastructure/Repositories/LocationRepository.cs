@@ -1,0 +1,12 @@
+﻿using Events.Application.Interfaces.Repositories;
+using Events.Domain.Entities;
+using Events.Infastructure.Data;
+
+
+namespace Events.Infastructure.Repositories
+{
+    public class LocationRepository : GenericRepository<Location>, ILocationRepository
+    {
+        public LocationRepository(ApplicationContext context) : base(context) { }
+    }
+}
