@@ -32,38 +32,28 @@ namespace TestEventApplication.UseCases
         public async Task UpdateParticipant()
         {
             // Arrange
-            var participantRepositoryMock = new Mock<IParticipantRepository>();
-            var mapperMock = new Mock<IMapper>();
-            var validateUseCaseMock = new Mock<IValidationUseCase<ParticipantRequestDto>>();
-
-            var updateUseCase = new UpdateParticipantUseCase(
-                participantRepositoryMock.Object,
-                mapperMock.Object
-            );
+            var updateUseCase = new UpdateParticipantUseCase(_participantRepositoryMock.Object, _mapper);
 
             int id = 1;
             var participantRequest = ObjectsGen.GetParticipantRequest();
             var updatedParticipant = ObjectsGen.GetParticipantObject();
             updatedParticipant.EventId = 3;
 
-            participantRepositoryMock.Setup(repo => repo.GetByIdAsync(id, It.IsAny<CancellationToken>()))
+            _participantRepositoryMock.Setup(repo => repo.GetByIdAsync(id, It.IsAny<CancellationToken>()))
                                      .ReturnsAsync(updatedParticipant);
-
-            validateUseCaseMock.Setup(validation => validation.ExecuteAsync(It.IsAny<ParticipantRequestDto>(), It.IsAny<CancellationToken>()))
-                               .Returns(Task.CompletedTask);
 
             // Act
             await updateUseCase.ExecuteAsync(id, participantRequest, CancellationToken.None);
 
             // Assert
-            participantRepositoryMock.Verify(repo => repo.Update(updatedParticipant), Times.Once);
+            _participantRepositoryMock.Verify(repo => repo.Update(updatedParticipant), Times.Once);
         }
 
         [Fact]
         public async Task UpdateParticipant_ReturnsException()
         {
             // Arrange
-            var updateUseCase = new AddLocationUseCase(_locationRepositoryMock.Object, _mapper);
+            var updateUseCase = new UpdateLocationUseCase(_locationRepositoryMock.Object, _mapper);
             var locationRequest = ObjectsGen.GetLocationRequest();
             locationRequest.House = "";
 
@@ -71,7 +61,7 @@ namespace TestEventApplication.UseCases
                 .ReturnsAsync(1);
 
             await Assert.ThrowsAsync<ValidationException>(() =>
-                updateUseCase.ExecuteAsync(locationRequest, CancellationToken.None));
+                updateUseCase.ExecuteAsync(1,locationRequest, CancellationToken.None));
         }
     }
 }
