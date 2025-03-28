@@ -1,4 +1,4 @@
-﻿using Events.Domain.Exceptions;
+using Events.Domain.Exceptions;
 using System.Net;
 
 namespace Events.Application.Exceptions
@@ -7,7 +7,8 @@ namespace Events.Application.Exceptions
     {
         public ObjectNotFoundException(
               string details,
-              string message = $"Requested object not found")
-            : base(message, details) { }
+              string message = $"Requested object not found",
+              HttpStatusCode statusCode = HttpStatusCode.NotFound)
+            : base(message, details, statusCode) { }
     }
 }

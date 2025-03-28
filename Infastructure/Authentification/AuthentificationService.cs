@@ -1,8 +1,8 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Events.Application;
 using Events.Application.DTO.RequestDTO;
 using Events.Application.DTO.ResponseDTO;
-using Events.Application.Interfaces.UseCases;
+using Events.Application.Interfaces.Repositories;
 using Events.Domain.Entities;
 using Events.Domain.Repositories;
 using Microsoft.IdentityModel.Tokens;
@@ -13,11 +13,9 @@ using System.Text;
 
 namespace Events.Infastructure.Authentification
 {
-    public class AuthentificationService : IAuthentificationService
+    public class AuthentificationService(IUnitOfWork uow, IMapper mapper) : IAuthentificationService
     {
-        private readonly IGetUserUseCase _getUseCase;
-        private readonly IUnitOfWork _uow;
-        private readonly IMapper _mapper;
+        private readonly IUserRepository _userRepository = uow.UserRepository;
 
         public AuthentificationService(IGetUserUseCase getUseCase, IUnitOfWork uow, IMapper mapper) 
         {
@@ -29,26 +27,26 @@ namespace Events.Infastructure.Authentification
         public async Task<AuthenticateResponse?> AuthenticateAsync(UserRequestDto userRequest, CancellationToken cancellationToken)
         {
             var passwordHash = HashPassword(userRequest.Password);
-            var user = await _getUseCase.ExecuteAsync(userRequest.Email, passwordHash, cancellationToken);
+            var user = (await _userRepository.GetAllAsync(cancellationToken)).SingleOrDefault(
+                u => u.Email == userRequest.Email && u.PasswordHash == passwordHash);
 
             if (user == null) return null;
 
             var newRefreshToken = GenerateRefreshToken();
             var response = GenerateResponse(user, newRefreshToken);
             user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiry = DateTime.UtcNow.AddMinutes(2);
+            user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(7);
 
-            _uow.UserRepository.Update(user);
-            await _uow.SaveAsync(cancellationToken);
+            _userRepository.Update(user);
+            await uow.SaveAsync(cancellationToken);
 
             return response;
         }
 
-        public async Task<AuthenticateResponse?> ValidateRefreshTokenAsync(string? refreshToken, CancellationToken cancellationToken)
+        public async Task<AuthenticateResponse?> ValidateRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
         {
-            if (refreshToken == null) return null;
-
-            var user = await _getUseCase.ExecuteAsync(refreshToken, cancellationToken);
+            var user = (await _userRepository.GetAllAsync(cancellationToken)).SingleOrDefault(
+                u => u.RefreshToken == refreshToken && u.RefreshTokenExpiry > DateTime.UtcNow);
 
             if (user == null) return null;
 
@@ -61,7 +59,7 @@ namespace Events.Infastructure.Authentification
 
             return new AuthenticateResponse
             {
-                User = _mapper.Map<UserResponseDto>(user),
+                User = mapper.Map<UserResponseDto>(user),
                 Token = token,
                 RefreshToken = refreshToken
             };

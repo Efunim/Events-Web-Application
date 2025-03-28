@@ -1,4 +1,7 @@
-﻿using Events.Domain.Entities;
+using Events.Application.Interfaces.Repositories;
+using Events.Application.Specifications;
+using Events.Application.Specifications.EventSpecifications;
+using Events.Domain.Entities;
 using Events.Domain.Repositories;
 using Events.Domain.Specifications;
 using Events.Infastructure.Data;

@@ -1,5 +1,8 @@
-﻿using Events.Domain.Repositories;
+using Events.Domain.Repositories;
 using Events.Infastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
+
 
 namespace Events.Infastructure.Repositories
 {

@@ -1,4 +1,4 @@
-﻿using Events.Application.DTO.RequestDTO;
+using Events.Application.DTO.RequestDTO;
 using FluentValidation;
 
 namespace Events.Application.Validators

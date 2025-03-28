@@ -1,4 +1,4 @@
-﻿using Events.Application.DTO.BaseDTO;
+using Events.Application.DTO.BaseDTO;
 
 namespace Events.Application.DTO.ResponseDTO
 {
